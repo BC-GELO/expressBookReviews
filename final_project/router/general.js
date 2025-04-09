@@ -8,17 +8,13 @@ const app = express();
 
 public_users.post("/register", (req,res) => {
     const {username, password} = req.body; 
-    if (!username || !password) {
-        res.status(400).json({message:"User or/and Password require"})
-    }
-    if(!isValid(username)) {
-        res.status(400).json({message:"Error User"})
-    }
-    const alreadyExist = users.some(user => user.username === username);
-    if (alreadyExist){
-        res.status(400).json({message:"User Already Exists"});
-    }
+    if (username !== users.username && password !== users.password){
+        res.status(400).json({message:"User Invad"});
+    } else {
     users.push({username,password});
+    next()
+    }
+
     return res.status(200).json({message:"User register"})
 });
 

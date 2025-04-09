@@ -3,6 +3,8 @@ const jwt = require('jsonwebtoken');
 let books = require("./booksdb.js");
 const regd_users = express.Router();
 const app = express();
+const general = require("./general.js")
+const bcrypt = require(`bcrypt`);
 
 let users = [];
 
@@ -16,27 +18,14 @@ const authenticatedUser = (username,password)=>{
 }
 
 //only registered users can login
-regd_users.post("/login", (req,res) => {
-    const { username, password } = req.body;
-    if (!username || !password){
-        return res.status(400).json({message:"Enter user and password!"})
+regd_users.post("/login", async (req,res) => {
+    const {username, password} = req.body;
+    if (authenticatedUser(username, password)){
+        const token = jwt.sign({username}, secretKey, {expiresIn: 60 * 60});
+        req.session.token;
+        res.json({token});
     }
-    if (authenticatedUser(username,password)) {
-        let token = jwt.sign({
-            data: password
-        }, `access`, {expiresIn: 60 * 60});
-        req.session.authenUser = {
-        token,
-        username
-        };
-        return res.status(200).json({
-            message:"User logged in",
-            token:token
-        });
-    } else {
-        return res.status(400).json({message:"User doesn't exist"});
-    }
-    
+    res.push({})
 
 });
 
